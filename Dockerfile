@@ -80,15 +80,6 @@ COPY config.fish /home/${ML_USER}/.config/fish/config.fish
 RUN mkdir -p /home/${ML_USER}/.local/share/fish
 COPY fish_history /home/${ML_USER}/.local/share/fish/fish_history
 
-# Install vim packages
-RUN rm -rf /home/${ML_USER}/.vim/bundle/Vundle.vim \
-    && mkdir -p /home/${ML_USER}/.vim/bundle \
-    && git clone https://github.com/VundleVim/Vundle.vim.git /home/${ML_USER}/.vim/bundle/Vundle.vim
-COPY .vimrc /home/${ML_USER}/.vimrc
-COPY install-vim-plugins.sh /home/${ML_USER}/
-RUN chmod +x /home/${ML_USER}/install-vim-plugins.sh \
-    && /home/${ML_USER}/install-vim-plugins.sh
-
 # Install fishmarks (this creates the .sdirs)
 RUN rm -rf /home/${ML_USER}/.fishmarks \
     && git clone http://github.com/techwizrd/fishmarks /home/${ML_USER}/.fishmarks
@@ -107,10 +98,19 @@ COPY vf-install-env.fish /home/${ML_USER}/vf-install-env.fish
 RUN chmod +x /home/${ML_USER}/vf-install-env.fish
 COPY pytorch.requirements.txt /home/${ML_USER}/pytorch.requirements.txt
 COPY fish_prompt.fish /home/${ML_USER}/.config/fish/functions/fish_prompt.fish
+COPY install-vim-plugins.sh /home/${ML_USER}/
+RUN chmod +x /home/${ML_USER}/install-vim-plugins.sh
+COPY .vimrc /home/${ML_USER}/.vimrc
 
 # Now, switch to our user
 RUN chown -R ${ML_USER}:${ML_USER} /home/${ML_USER}
 USER ${ML_USER}
+
+# Install vim packages
+RUN rm -rf /home/${ML_USER}/.vim/bundle/Vundle.vim \
+    && mkdir -p /home/${ML_USER}/.vim/bundle \
+    && git clone https://github.com/VundleVim/Vundle.vim.git /home/${ML_USER}/.vim/bundle/Vundle.vim \
+    && /home/${ML_USER}/install-vim-plugins.sh
 
 # Create .ssh folder to keep authorized_keys later on
 RUN mkdir -p /home/${ML_USER}/.ssh \
@@ -120,7 +120,7 @@ RUN mkdir -p /home/${ML_USER}/.ssh \
 RUN fish --command "echo 'Initializing and exiting fish shell'"
 
 # Download and install Miniconda
-ENV CONDA_DIR=/home/${ML_USER}/miniconda3
+ENV CONDA_DIR=/home/${ML_USER}/toolbox/miniconda3
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
     && /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR \
     && rm /tmp/miniconda.sh \
