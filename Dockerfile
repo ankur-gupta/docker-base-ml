@@ -1,8 +1,8 @@
 # Build:
-# docker build --platform=linux/amd64 . -t ml-base
+# docker build --platform=linux/amd64 . -t docker-ml-base
 # Push:
-# docker tag ml-base:latest ankurio/ml-base:latest
-# docker push ankurio/ml-base:latest
+# docker tag docker-ml-base:latest ankurio/docker-ml-base:latest
+# docker push docker-ankurio/ml-base:latest
 
 FROM ubuntu:latest
 
