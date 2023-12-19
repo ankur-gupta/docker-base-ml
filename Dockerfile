@@ -98,8 +98,6 @@ COPY vf-install-env.fish /home/${ML_USER}/vf-install-env.fish
 RUN chmod +x /home/${ML_USER}/vf-install-env.fish
 COPY pytorch.requirements.txt /home/${ML_USER}/pytorch.requirements.txt
 COPY fish_prompt.fish /home/${ML_USER}/.config/fish/functions/fish_prompt.fish
-COPY install-vim-plugins.sh /home/${ML_USER}/
-RUN chmod +x /home/${ML_USER}/install-vim-plugins.sh
 COPY .vimrc /home/${ML_USER}/.vimrc
 
 # Now, switch to our user
