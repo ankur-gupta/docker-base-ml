@@ -1,0 +1,34 @@
+# Basic
+numpy
+pandas
+matplotlib
+seaborn
+scipy
+scikit-learn
+
+# ML
+torch
+torchtext
+tqdm
+transformers
+datasets
+sentencepiece
+
+# ML Experiment tracking
+wandb
+wbutils
+
+# Testing
+hatch
+pytest
+coverage
+codecov
+pytest-cov
+pytest-mock
+
+# Development
+ipython
+jupyter
+ipdb
+requests
+ujson

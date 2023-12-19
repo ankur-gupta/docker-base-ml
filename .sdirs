@@ -1,0 +1,2 @@
+export DIR_fish_config="$HOME/.config/fish"
+export DIR_bin="$HOME/toolbox/bin"
