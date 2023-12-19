@@ -2,7 +2,7 @@
 
 [![Static Badge](https://img.shields.io/badge/Homepage-GitHub-blue)](https://github.com/ankur-gupta/docker-ml-base/)
 [![Static Badge](https://img.shields.io/badge/Image-DockerHub-cyan)](https://hub.docker.com/repository/docker/ankurio/docker-ml-base/general)
-[![GitHub](https://img.shields.io/github/license/ankur-gupta/docker-ml-base)](https://github.com/ankur-gupta/docker-ml-base/blob/main/LICENSE)
+![License](https://img.shields.io/github/license/ankur-gupta/docker-ml-base?link=https%3A%2F%2Fgithub.com%2Fankur-gupta%2Fdocker-ml-base%2Fblob%2Fmain%2FLICENSE)
 
 ## Use cases
 You should use this image if you
