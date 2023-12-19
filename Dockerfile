@@ -18,6 +18,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # We clean up apt cache to reduce image size as mentioned here:
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+# Install `add-apt-repository` command first!
+RUN apt-get update \
+    && apt-get install -y software-properties-common \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # https://askubuntu.com/questions/1413421/how-to-install-older-version-of-python-in-ubuntu-22-04
 RUN add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update \
@@ -27,7 +34,6 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     ssh \
     git \
     git-extras \
-    software-properties-common \
     openssh-server \
     nginx \
     unzip \
