@@ -136,7 +136,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 # doesn't seem to use this. See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 # This is probably why variables set by ENV directive are available to all
 # users as mentioned in https://stackoverflow.com/questions/32574429/dockerfile-create-env-variable-that-a-user-can-see
-ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:$CONDA_DIR/bin
+ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:${MINICONDA_INSTALLATION}/bin
 
 # We remove pip cache so docker can store the layer for later reuse.
 # Install a pytorch environment using virtualfish
