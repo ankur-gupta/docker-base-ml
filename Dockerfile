@@ -110,7 +110,8 @@ USER ${ML_USER}
 RUN rm -rf /home/${ML_USER}/.vim/bundle/Vundle.vim \
     && mkdir -p /home/${ML_USER}/.vim/bundle \
     && git clone https://github.com/VundleVim/Vundle.vim.git /home/${ML_USER}/.vim/bundle/Vundle.vim \
-    && /home/${ML_USER}/install-vim-plugins.sh
+    && vim +PluginInstall +qall
+#    && /home/${ML_USER}/install-vim-plugins.sh
 
 # Create .ssh folder to keep authorized_keys later on
 RUN mkdir -p /home/${ML_USER}/.ssh \
@@ -120,13 +121,14 @@ RUN mkdir -p /home/${ML_USER}/.ssh \
 RUN fish --command "echo 'Initializing and exiting fish shell'"
 
 # Download and install Miniconda
-ENV CONDA_DIR=/home/${ML_USER}/toolbox/miniconda3
+ENV MINICONDA_INSTALLATION=/home/${ML_USER}/toolbox/miniconda3
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
-    && /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR \
+    && /bin/bash /tmp/miniconda.sh -b -p ${MINICONDA_INSTALLATION} \
     && rm /tmp/miniconda.sh \
-    && chmod +x $CONDA_DIR/condabin/conda \
-    && $CONDA_DIR/condabin/conda config --set always_yes yes \
-    && $CONDA_DIR/condabin/conda update -q conda
+    && chmod +x ${MINICONDA_INSTALLATION}/condabin/conda \
+    && ln -fs ${MINICONDA_INSTALLATION}/etc/fish/conf.d/conda.fish /home/${ML_USER}/.config/fish/conf.d/conda.fish \
+    && ${MINICONDA_INSTALLATION}/condabin/conda config --set always_yes yes \
+    && ${MINICONDA_INSTALLATION}/condabin/conda update -q conda
 
 # Augment path so we can call ipython and jupyter
 # Using $HOME would just use the root user. $HOME works with the RUN directive
