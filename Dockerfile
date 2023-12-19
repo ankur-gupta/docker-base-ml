@@ -1,3 +1,9 @@
+# Build:
+# docker build --platform=linux/amd64 . -t ml-base
+# Push:
+# docker tag ml-base:latest ankurio/ml-base:latest
+# docker push ankurio/ml-base:latest
+
 FROM ubuntu:latest
 
 # This is the user that will execute most of the commands within the docker container.
