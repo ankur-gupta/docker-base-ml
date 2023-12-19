@@ -20,15 +20,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
 # Install `add-apt-repository` command first!
 RUN apt-get update \
-    && apt-get install -y software-properties-common \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# https://askubuntu.com/questions/1413421/how-to-install-older-version-of-python-in-ubuntu-22-04
-RUN add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update \
-    && apt-get install -y \
+    && apt-get install -y  \
+    software-properties-common \
     sudo \
     rsync \
     ssh \
@@ -56,7 +49,14 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     python3-dev \
     pipx \
     fish \
-    python3.9 \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# https://askubuntu.com/questions/1413421/how-to-install-older-version-of-python-in-ubuntu-22-04
+RUN add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get install -y python3.9 python3.9-venv \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
