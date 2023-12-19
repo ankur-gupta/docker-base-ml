@@ -80,9 +80,6 @@ COPY config.fish /home/${ML_USER}/.config/fish/config.fish
 RUN mkdir -p /home/${ML_USER}/.local/share/fish
 COPY fish_history /home/${ML_USER}/.local/share/fish/fish_history
 
-# Create .ssh folder to keep authorized_keys later on
-RUN mkdir -p /home/${ML_USER}/.ssh
-
 # Install vim packages
 RUN rm -rf /home/${ML_USER}/.vim/bundle/Vundle.vim \
     && mkdir -p /home/${ML_USER}/.vim/bundle \
@@ -111,22 +108,25 @@ RUN chmod +x /home/${ML_USER}/vf-install-env.fish
 COPY pytorch.requirements.txt /home/${ML_USER}/pytorch.requirements.txt
 COPY fish_prompt.fish /home/${ML_USER}/.config/fish/functions/fish_prompt.fish
 
-# Download and install Miniconda
-ENV CONDA_DIR=/opt/conda
-#ENV PATH=$PATH:$CONDA_DIR/bin
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
-    && /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR \
-    && rm /tmp/miniconda.sh \
-    && chmod +x $CONDA_DIR/bin/conda \
-    && $CONDA_DIR/bin/conda config --set always_yes yes \
-    && $CONDA_DIR/bin/conda update -q conda
-
 # Now, switch to our user
 RUN chown -R ${ML_USER}:${ML_USER} /home/${ML_USER}
 USER ${ML_USER}
 
+# Create .ssh folder to keep authorized_keys later on
+RUN mkdir -p /home/${ML_USER}/.ssh \
+    && chmod 700 /home/${ML_USER}/.ssh
+
 # Run fish and exit to initialize fish shell
-RUN fish --command "echo 'Hello from Fish Shell!'"
+RUN fish --command "echo 'Initializing and exiting fish shell'"
+
+# Download and install Miniconda
+ENV CONDA_DIR=/home/${ML_USER}/miniconda3
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
+    && /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR \
+    && rm /tmp/miniconda.sh \
+    && chmod +x $CONDA_DIR/condabin/conda \
+    && $CONDA_DIR/condabin/conda config --set always_yes yes \
+    && $CONDA_DIR/condabin/conda update -q conda
 
 # Augment path so we can call ipython and jupyter
 # Using $HOME would just use the root user. $HOME works with the RUN directive
@@ -139,8 +139,8 @@ ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:$CONDA_D
 # We remove pip cache so docker can store the layer for later reuse.
 # Install a pytorch environment using virtualfish
 RUN pipx install virtualfish --pip-args="--no-cache-dir" \
-    && vf install \
     && mkdir -p /home/${ML_USER}/.virtualenvs \
+    && fish --command "which vf; and vf install" \
     && fish /home/${ML_USER}/vf-install-env.fish pytorch && rm -rf /home/${ML_USER}/.cache/pip
 
 # Set the working directory as the home directory of $ML_USER
