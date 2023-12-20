@@ -78,9 +78,6 @@ jobs:
           # This allows us to test it out in the next step.
           load: true  
 
-      # - name: Build the image
-      #   run: docker build . --file Dockerfile --tag ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-
       - name: Run the image
         run: docker run ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }} pwd
 
