@@ -141,7 +141,8 @@ ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:${MINICO
 RUN pipx install virtualfish --pip-args="--no-cache-dir" \
     && mkdir -p /home/${ML_USER}/.virtualenvs \
     && fish --command "which vf; and vf install" \
-    && fish /home/${ML_USER}/vf-install-env.fish pytorch && rm -rf /home/${ML_USER}/.cache/pip
+    && fish /home/${ML_USER}/vf-install-env.fish pytorch /home/${ML_USER}/pytorch.requirements.txt \
+    && rm -rf /home/${ML_USER}/.cache/pip
 
 # Set the working directory as the home directory of $ML_USER
 # Using $HOME would not work and is not a recommended way.
