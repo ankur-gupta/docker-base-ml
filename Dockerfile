@@ -109,7 +109,6 @@ RUN rm -rf /home/${ML_USER}/.vim/bundle/Vundle.vim \
     && mkdir -p /home/${ML_USER}/.vim/bundle \
     && git clone https://github.com/VundleVim/Vundle.vim.git /home/${ML_USER}/.vim/bundle/Vundle.vim \
     && vim +PluginInstall +qall
-#    && /home/${ML_USER}/install-vim-plugins.sh
 
 # Create .ssh folder to keep authorized_keys later on
 RUN mkdir -p /home/${ML_USER}/.ssh \
@@ -120,7 +119,8 @@ RUN fish --command "echo 'Initializing and exiting fish shell'"
 
 # Download and install Miniconda
 ENV MINICONDA_INSTALLATION=/home/${ML_USER}/toolbox/miniconda3
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
+ENV CONDA_NO_PATH_UPDATE=true
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -qO /tmp/miniconda.sh \
     && /bin/bash /tmp/miniconda.sh -b -p ${MINICONDA_INSTALLATION} \
     && rm /tmp/miniconda.sh \
     && chmod +x ${MINICONDA_INSTALLATION}/condabin/conda \
@@ -134,7 +134,8 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 # doesn't seem to use this. See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 # This is probably why variables set by ENV directive are available to all
 # users as mentioned in https://stackoverflow.com/questions/32574429/dockerfile-create-env-variable-that-a-user-can-see
-ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:${MINICONDA_INSTALLATION}/bin
+ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin
+# ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin:${MINICONDA_INSTALLATION}/condabin
 
 # We remove pip cache so docker can store the layer for later reuse.
 # Install a pytorch environment using virtualfish
