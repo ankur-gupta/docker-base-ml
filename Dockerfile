@@ -1,8 +1,8 @@
 # Build:
 # docker build --platform=linux/amd64 . -t docker-ml-base
 # Push:
-# docker tag docker-ml-base:latest ankurio/docker-ml-base:latest
-# docker push ankurio/docker-ml-base:latest
+# docker tag docker-ml-base:latest ghcr.io/ankur-gupta/docker-ml-base:latest
+# docker push ghcr.io/ankur-gupta/docker-ml-base:latest
 
 FROM ubuntu:latest
 

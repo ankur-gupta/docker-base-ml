@@ -6,10 +6,8 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  GITHUB_REGISTRY: ghcr.io
-  GITHUB_IMAGE_NAME: ${{ github.repository }}  # <account>/<repo>
-  DOCKERHUB_REGISTRY: docker.io
-  DOCKERHUB_IMAGE_NAME: ${{ github.event.repository.name }}  # <repo> only
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}  # <account>/<repo>
   VERSIONED_TAG: ${{ github.event.release.tag_name }}  # Example: 0.0.1
   LATEST_TAG: latest
 
@@ -33,60 +31,46 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
 
-      # Login against a GitHub Registry (https://github.com/docker/login-action)
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
-          registry: ${{ env.GITHUB_REGISTRY }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      
-      # Login against the DockerHub registry (https://github.com/docker/login-action)
-      - name: Log into DockerHub registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-        with:
-          registry: ${{ env.DOCKERHUB_REGISTRY }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.PAT_CLASSIC_GITHUB_DOCKER_BUILD_READ_WRITE }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
+      - name: Debug Tags
+        run: |
+          echo "VERSIONED_TAG: ${{ env.VERSIONED_TAG }}"
+          echo "LATEST_TAG: ${{ env.LATEST_TAG }}"
+
+      # Extract metadata (tags, labels) for Docker (https://github.com/docker/metadata-action)
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
-          images: ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build but not push yet Docker image
+      # Build and push Docker image with Buildx (https://github.com/docker/build-push-action)
+      - name: Build and push Docker image to ${{ env.REGISTRY }}
         id: build-and-push
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
-          push: false
+          push: true  # change to false if you want to experiment
           tags: |
-            ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-            ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-            ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}:${{ env.LATEST_TAG }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.LATEST_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}  # From Dockerfile lines eg: `LABEL maintainer="Your Name <your.email@example.com>"`
           cache-from: type=gha
           cache-to: type=gha,mode=max
           # Load the built image into Docker instead of pushing it to a registry
           # This allows us to test it out in the next step.
-          load: true  
+          load: false  # change to true if you want to run the image in the next step
 
-      - name: Run the image
-        run: docker run ${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }} pwd
-
-      - name: Push to GitHub Packages (${{ env.GITHUB_REGISTRY }}) registry
-        run: |
-          docker push ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-          docker push ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_IMAGE_NAME }}:${{ env.LATEST_TAG }}
-
-      - name: Push to DockerHub (${{ env.DOCKERHUB_REGISTRY }}) registry
-        run: |
-          docker push ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.VERSIONED_TAG }}
-          docker push ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.LATEST_TAG }}
+      # - name: Run the image
+      #   run: docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} pwd
+      
+      
