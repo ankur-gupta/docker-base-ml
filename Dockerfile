@@ -1,8 +1,8 @@
 # Build:
-# docker build --platform=linux/amd64 . -t docker-ml-base
+# docker build --platform=linux/amd64 . -t docker-base-ml
 # Push:
-# docker tag docker-ml-base:latest ghcr.io/ankur-gupta/docker-ml-base:latest
-# docker push ghcr.io/ankur-gupta/docker-ml-base:latest
+# docker tag docker-base-ml:latest ghcr.io/ankur-gupta/docker-base-ml:latest
+# docker push ghcr.io/ankur-gupta/docker-base-ml:latest
 
 FROM ubuntu:latest
 
@@ -43,6 +43,8 @@ RUN apt-get update \
     vim \
     man \
     man-db \
+    binutils nfs-common stunnel4 \
+    awscli \
     iputils-ping \
     python3-pip \
     python3-venv \
@@ -60,6 +62,15 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# We install AWS efs-client just so that we don't need to install later on.
+# https://docs.aws.amazon.com/efs/latest/ug/installing-amazon-efs-utils.html#installing-other-distro
+# We should've already installed git and binutils above.
+RUN git clone https://github.com/aws/efs-utils /tmp/efs-utils \
+    && cd /tmp/efs-utils \
+    && ./build-deb.sh \
+    && apt-get -y install ./build/amazon-efs-utils*deb \
+    && cd
 
 # Create $ML_USER non-interactively and add it to sudo group. See
 # (1) https://stackoverflow.com/questions/25845538/how-to-use-sudo-inside-a-docker-container

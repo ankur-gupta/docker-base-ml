@@ -1,8 +1,8 @@
 # Docker Image for ML with PyTorch
 
-[![Static Badge](https://img.shields.io/badge/Homepage-GitHub-blue)](https://github.com/ankur-gupta/docker-ml-base/)
-[![Static Badge](https://img.shields.io/badge/Image-DockerHub-cyan)](https://hub.docker.com/repository/docker/ankurio/docker-ml-base/general)
-![License](https://img.shields.io/github/license/ankur-gupta/docker-ml-base?link=https%3A%2F%2Fgithub.com%2Fankur-gupta%2Fdocker-ml-base%2Fblob%2Fmain%2FLICENSE)
+[![Static Badge](https://img.shields.io/badge/Homepage-GitHub-blue)](https://github.com/ankur-gupta/docker-base-ml/)
+[![Static Badge](https://img.shields.io/badge/Image-DockerHub-cyan)](https://hub.docker.com/repository/docker/ankurio/docker-base-ml/general)
+![License](https://img.shields.io/github/license/ankur-gupta/docker-base-ml?link=https%3A%2F%2Fgithub.com%2Fankur-gupta%2Fdocker-base-ml%2Fblob%2Fmain%2FLICENSE)
 
 ## Use cases
 You should use this image if you
@@ -62,8 +62,8 @@ without having to become `root`.
 ## Get the image
 ### From Docker Hub
 ```shell
-docker pull ankurio/docker-ml-base:latest
-docker run -it ankurio/docker-ml-base:latest /usr/bin/fish
+docker pull ankurio/docker-base-ml:latest
+docker run -it ankurio/docker-base-ml:latest /usr/bin/fish
 ```
 
 ### Clone from GitHub Packages
@@ -75,27 +75,27 @@ Password: # type your GitHub password (not token)
 # Login Succeeded  <- Success!
 
 # Now, you can pull the image
-docker pull ghcr.io/ankur-gupta/docker-ml-base:latest
-docker run -it ghcr.io/ankur-gupta/docker-ml-base /usr/bin/fish
+docker pull ghcr.io/ankur-gupta/docker-base-ml:latest
+docker run -it ghcr.io/ankur-gupta/docker-base-ml /usr/bin/fish
 ```
 
 ### Build it yourself
 Alternatively, you can clone the repository and build it yourself. It will take ~10 minutes to build the first time.
 ```shell
 # Clone the repository
-git clone git@github.com:ankur-gupta/docker-ml-base.git
+git clone git@github.com:ankur-gupta/docker-base-ml.git
 
 # From $REPO_ROOT
 cd $REPO_ROOT
-docker build . -t docker-ml-base
-docker run -it docker-ml-base /usr/bin/fish
+docker build . -t docker-base-ml
+docker run -it docker-base-ml /usr/bin/fish
 ```
 
 ## Usage
 ```shell
 # This command assumes that you pulled the image from DockerHub. Modify if you got the image
 # in other ways.
-docker run -it ankurio/docker-ml-base:latest /usr/bin/fish
+docker run -it ankurio/docker-base-ml:latest /usr/bin/fish
 
 # Execute these within the docker container
 # Use the installed `pytorch` virtualenv
@@ -126,7 +126,7 @@ exit  # or press Control+D
 ### Debugging build errors
 A `RUN echo "print something"` line in `Dockerfile` will be useful if you use ["plain progress"](https://stackoverflow.com/a/67548336/4383754)
 ```shell
-docker build . -t docker-ml-base --progress=plain
+docker build . -t docker-base-ml --progress=plain
 ```
 
 ### Clean all containers and images
