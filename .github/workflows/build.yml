@@ -6,6 +6,7 @@ name: build
 # documentation.
 
 on:
+  workflow_dispatch:  # Allow manual trigger button
   push:
     branches: [ "main" ]
     paths-ignore:
