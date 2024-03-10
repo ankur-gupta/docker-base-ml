@@ -70,7 +70,8 @@ RUN git clone https://github.com/aws/efs-utils /tmp/efs-utils \
     && cd /tmp/efs-utils \
     && ./build-deb.sh \
     && apt-get -y install ./build/amazon-efs-utils*deb \
-    && cd
+    && cd \
+    && rm -rf /tmp/efs-utils
 
 # Create $ML_USER non-interactively and add it to sudo group. See
 # (1) https://stackoverflow.com/questions/25845538/how-to-use-sudo-inside-a-docker-container
