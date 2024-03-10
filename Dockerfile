@@ -150,7 +150,8 @@ ENV PATH=/home/${ML_USER}/toolbox/bin:$PATH:/home/${ML_USER}/.local/bin
 
 # We remove pip cache so docker can store the layer for later reuse.
 # Install a pytorch environment using virtualfish
-RUN pipx install virtualfish --pip-args="--no-cache-dir" \
+# This virtualenv will be installed for the ML_USER but not for the root user.
+RUN pipx install virtualfish==2.5.5 --pip-args="--no-cache-dir" \
     && mkdir -p /home/${ML_USER}/.virtualenvs \
     && fish --command "which vf; and vf install" \
     && fish /home/${ML_USER}/vf-install-env.fish pytorch /home/${ML_USER}/pytorch.requirements.txt \
