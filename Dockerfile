@@ -63,14 +63,19 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# We install AWS efs-client just so that we don't need to install later on.
+# Needed to mount AWS EFS file system using this command
+# sudo mount -t efs -o tls,ro fs-<id>:/ /mnt/efs
 # https://docs.aws.amazon.com/efs/latest/ug/installing-amazon-efs-utils.html#installing-other-distro
+# We install AWS efs-client just so that we don't need to install later on.
 # We should've already installed git and binutils above.
 RUN git clone https://github.com/aws/efs-utils /tmp/efs-utils \
     && cd /tmp/efs-utils \
     && ./build-deb.sh \
-    && apt-get -y install ./build/amazon-efs-utils*deb \
-    && cd \
+    && apt-get update \
+    && apt-get -y install /tmp/efs-utils/build/amazon-efs-utils*deb \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/efs-utils
 
 # Create $ML_USER non-interactively and add it to sudo group. See
