@@ -32,6 +32,10 @@ jobs:
       id-token: write
 
     steps:
+      # https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -75,4 +79,3 @@ jobs:
 
       # - name: Run the image
       #   run: docker run --rm ${{ github.event.repository.name }}:${{ github.sha }} pwd
-        
