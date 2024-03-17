@@ -4,6 +4,9 @@
 [![Static Badge](https://img.shields.io/badge/Image-DockerHub-cyan)](https://hub.docker.com/repository/docker/ankurio/docker-base-ml/general)
 ![License](https://img.shields.io/github/license/ankur-gupta/docker-base-ml?link=https%3A%2F%2Fgithub.com%2Fankur-gupta%2Fdocker-base-ml%2Fblob%2Fmain%2FLICENSE)
 
+## Deprecation
+* [ml-pytorch](https://github.com/ankur-gupta/docker-base-ml/pkgs/container/ml-pytorch) is no longer being devleoped and will be removed. Please switch to [docker-base-ml](https://github.com/users/ankur-gupta/packages/container/package/docker-base-ml). 
+
 ## Use cases
 You should use this image if you
 * need to run PyTorch on an Nvidia CUDA 11.8.0 GPU device
