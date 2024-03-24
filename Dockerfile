@@ -111,6 +111,7 @@ RUN rm -rf /home/${ML_USER}/.fish-ssh-agent \
     && ls /home/${ML_USER}/.fish-ssh-agent/conf.d/*.fish | xargs -I{} ln -s {} /home/${ML_USER}/.config/fish/conf.d/
 
 # Prepare to install virtualfish
+COPY vf-update-env.fish /home/${ML_USER}/vf-update-env.fish
 COPY vf-install-env.fish /home/${ML_USER}/vf-install-env.fish
 RUN chmod +x /home/${ML_USER}/vf-install-env.fish
 COPY pytorch.requirements.txt /home/${ML_USER}/pytorch.requirements.txt
