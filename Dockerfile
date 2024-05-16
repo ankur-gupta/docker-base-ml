@@ -19,6 +19,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # We clean up apt cache to reduce image size as mentioned here:
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
 # Install `add-apt-repository` command from the `software-properties-common` package.
+# `cargo`, `libssl-dev`, `pkg-config` is needed by efs-tools later
 RUN apt-get update \
     && apt-get install -y  \
     software-properties-common \
@@ -44,7 +45,7 @@ RUN apt-get update \
     man \
     man-db \
     binutils nfs-common stunnel4 \
-    awscli \
+    cargo libssl-dev pkg-config\
     iputils-ping \
     python3-pip \
     python3-venv \
@@ -63,11 +64,21 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install awscli via the official route
+# https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -qO /tmp/awscliv2.zip \
+    && unzip /tmp/awscliv2.zip -d /tmp/awscli \
+    && /tmp/awscli/aws/install \
+    && which aws \
+    && rm -rf /tmp/aws \
+    && rm -rf /tmp/awscliv2.zip
+
 # Needed to mount AWS EFS file system using this command
 # sudo mount -t efs -o tls,ro fs-<id>:/ /mnt/efs
 # https://docs.aws.amazon.com/efs/latest/ug/installing-amazon-efs-utils.html#installing-other-distro
 # We install AWS efs-client just so that we don't need to install later on.
 # We should've already installed git and binutils above.
+# Requires `cargo`, `libssl-dev`, `pkg-config` packages to be installed by apt-get
 RUN git clone https://github.com/aws/efs-utils /tmp/efs-utils \
     && cd /tmp/efs-utils \
     && ./build-deb.sh \
@@ -76,6 +87,7 @@ RUN git clone https://github.com/aws/efs-utils /tmp/efs-utils \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
+    && cd $HOME \
     && rm -rf /tmp/efs-utils
 
 # Create $ML_USER non-interactively and add it to sudo group. See
